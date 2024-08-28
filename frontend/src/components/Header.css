@@ -1,0 +1,26 @@
+/* src/components/Header.css */
+.navbar {
+    border-bottom: 2px solid #dee2e6;
+  }
+  
+  .navbar-brand img {
+    max-height: 50px;
+  }
+  
+  .nav-link img {
+    margin: 0 10px;
+  }
+  
+  /* Header.css */
+
+img {
+  border-radius: 50%; /* Makes images circular */
+}
+
+img.logo {
+  border-radius: 0; /* No border radius for the logo */
+}
+
+img.icon {
+  border-radius: 50%; /* Curvy border radius for icons */
+}
