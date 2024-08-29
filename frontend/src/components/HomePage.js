@@ -1,9 +1,9 @@
+// src/components/HomePage.js
 import React from 'react';
-import { Container, Row, Col, Button, Card } from 'react-bootstrap';
+import { Container, Row, Col, Button, Carousel } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 const HomePage = () => {
-  // Example data for recommended recipes
   const recommendedRecipes = [
     { id: 1, title: 'Spaghetti Carbonara', description: 'A classic Italian pasta dish.', image: 'https://via.placeholder.com/150' },
     { id: 2, title: 'Chicken Tikka Masala', description: 'A flavorful chicken curry.', image: 'https://via.placeholder.com/150' },
@@ -11,28 +11,36 @@ const HomePage = () => {
   ];
 
   return (
-    <Container className="mt-1"> 
-      <h1 className="text-center mb-2">Welcome to MealMatch!</h1>
-      <Row className="justify-content-center mb-2">
-        <Col xs="auto">
-          <Button variant="primary" as={Link} to="/search-recipes" className="me-2">Search Recipes</Button>
-          <Button variant="secondary" as={Link} to="/search-by-ingredients">Search by Ingredients</Button>
+    <Container className="mt-4">
+      <Row className="justify-content-center mb-4">
+        <Col md={4} className="text-center">
+          <h5>Discover recipes for any meal. Find new dishes based on your preferences.</h5>
+          <Button variant="primary" as={Link} to="/search-recipes" className="my-3">Search Recipes</Button>
+        </Col>
+        <Col md={4} className="text-center">
+          <h5>Find recipes with what you have. Enter your ingredients to get meal ideas.</h5>
+          <Button variant="secondary" as={Link} to="/search-by-ingredients" className="my-3">Search by Ingredients</Button>
         </Col>
       </Row>
-      <h2 className="text-center mb-3">Recommended Recipes</h2>
       <Row>
-        {recommendedRecipes.map(recipe => (
-          <Col md={4} key={recipe.id} className="mb-2">
-            <Card>
-              <Card.Img variant="top" src={recipe.image} />
-              <Card.Body>
-                <Card.Title>{recipe.title}</Card.Title>
-                <Card.Text>{recipe.description}</Card.Text>
-                <Button variant="primary" as={Link} to={`/recipe/${recipe.id}`}>View Recipe</Button>
-              </Card.Body>
-            </Card>
-          </Col>
-        ))}
+        <Col>
+          <Carousel>
+            {recommendedRecipes.map(recipe => (
+              <Carousel.Item key={recipe.id}>
+                <img
+                  className="d-block w-100"
+                  src={recipe.image}
+                  alt={recipe.title}
+                />
+                <Carousel.Caption>
+                  <h3>{recipe.title}</h3>
+                  <p>{recipe.description}</p>
+                  <Button variant="primary" as={Link} to={`/recipe/${recipe.id}`}>View Recipe</Button>
+                </Carousel.Caption>
+              </Carousel.Item>
+            ))}
+          </Carousel>
+        </Col>
       </Row>
     </Container>
   );

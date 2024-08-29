@@ -5,3 +5,64 @@ html, body {
     overflow-y: hidden; /* Disable vertical scrolling */
   }
   
+  /* src/index.css */
+
+/* General body styling */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #ff9800; /* Set the background color */
+  color: #000; /* Default text color */
+}
+
+/* Ensures the main content covers the full viewport height */
+/* src/index.css */
+
+/* Apply background color to the whole page */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #ff9800; /* Background color for the entire page */
+  color: #000; /* Default text color */
+}
+
+/* Ensure the app container takes full height and has the background color */
+.app-container {
+  min-height: 100vh;
+  padding: 20px;
+}
+
+/* src/index.css */
+
+/* Apply the yellow color to all buttons with higher specificity */
+button, .btn {
+  background-color: #ff9800 !important; /* Yellow color */
+  border: none !important;
+  color:  white!important; /* Text color */
+  border-radius: 0.25rem; /* Optional: Adjust border radius */
+  
+}
+
+/* Change button color on hover */
+button:hover, .btn:hover {
+  background-color: #ff9900f1 !important; /* Slightly darker yellow on hover */
+  color: white !important; /* Ensure text color remains readable */
+}
+
+/* src/index.css or src/components/HomePage.css */
+
+.carousel-item img {
+  height: 550px; /* Adjust height of the carousel images */
+  object-fit: cover; /* Ensure images cover the space */
+}
+
+.carousel-caption {
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background for readability */
+  border-radius: 10px;
+}
+
+.carousel-caption h3,
+.carousel-caption p {
+  color: #fff; /* Text color */
+}
+

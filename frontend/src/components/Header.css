@@ -1,26 +1,50 @@
-/* src/components/Header.css */
+/* Ensure navbar background color */
 .navbar {
-    border-bottom: 2px solid #dee2e6;
-  }
-  
-  .navbar-brand img {
-    max-height: 50px;
-  }
-  
-  .nav-link img {
-    margin: 0 10px;
-  }
-  
-  /* Header.css */
+  background-color: #FABC3F;
+  border-bottom: 2px solid #dee2e6;
+}
 
-img {
-  border-radius: 50%; /* Makes images circular */
+.navbar .container {
+  background-color: #FABC3F;
+}
+
+.navbar-brand img {
+  max-height: 50px;
 }
 
 img.logo {
-  border-radius: 0; /* No border radius for the logo */
+  border-radius: 10px;
 }
 
-img.icon {
-  border-radius: 50%; /* Curvy border radius for icons */
+.info-icon {
+  cursor: pointer;
+  color: white;
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+
+
+.info-icon .dropdown-toggle::after {
+  display: none;
+}
+
+.navbar-nav {
+  margin-left: auto;
+}
+
+/* Dropdown menu styles */
+.dropdown-menu {
+  padding: 0 !important;
+  background-color: white !important; /* Ensure the dropdown background color is applied */
+  border: none; /* Remove default border */
+}
+
+.dropdown-item {
+  color: #000 !important; /* Ensure text color for dropdown items */
+}
+
+.dropdown-item:hover {
+  background-color: #ff9800 !important; /* Ensure background color on hover */
+  color: #fff !important; /* Ensure text color on hover */
 }

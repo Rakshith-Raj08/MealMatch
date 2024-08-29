@@ -1,21 +1,26 @@
-// src/App.js
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Header from './components/Header';
 import HomePage from './components/HomePage';
-import SearchRecipes from './components/SearchRecipes';
+import AboutWebsite from './components/AboutWebsite';
+import AboutDeveloper from './components/AboutDeveloper';
+import Header from './components/Header';
 import SearchByIngredients from './components/SearchByIngredients';
-import './index.css';
+import SearchRecipes from  './components/SearchRecipes' ;
+import './index.css'; // Ensure  this import is correct
 
 const App = () => {
   return (
     <Router>
       <Header />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/search-recipes" element={<SearchRecipes />} />
-        <Route path="/search-ingredients" element={<SearchByIngredients />} />
-      </Routes>
+      <div className="app-container"> {/* Ensure this class is applied */}
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/about-website" element={<AboutWebsite />} />
+          <Route path="/about-developer" element={<AboutDeveloper />} />
+          <Route path="/search-by-ingredients" element={<SearchByIngredients />} />
+          <Route path="/search-recipes" element={<SearchRecipes />} />
+        </Routes>
+      </div>
     </Router>
   );
 };

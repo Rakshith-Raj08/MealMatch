@@ -1,19 +1,17 @@
 import React from 'react';
-import { Container, Navbar, Nav } from 'react-bootstrap';
+import { Container, Navbar, Nav, Dropdown } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { AiFillInfoCircle } from 'react-icons/ai'; // Import the filled InfoCircle icon from react-icons
 import './Header.css'; 
 import logo from '../assets/logo2.png'; 
-import llogo from '../assets/llogo.png'; 
-import glogo from '../assets/glogo.png'; 
-import gmlogo from '../assets/gmlogo.png'; 
 
 const Header = () => {
   return (
-    <Navbar bg="light" expand="lg" className="mb-4">
+    <Navbar className="navbar" expand="lg">
       <Container>
         <Navbar.Brand as={Link} to="/">
           <img
-            src={logo} // This will be handled by file-loader
+            src={logo}
             alt="MealMatch Logo"
             width="auto"
             height="auto"
@@ -23,33 +21,15 @@ const Header = () => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ml-auto">
-            <Nav.Link href="https://www.linkedin.com/in/rakshith-raj-b38936220/" target="_blank" rel="noopener noreferrer">
-              <img
-                src={llogo} // Update with correct path
-                alt="LinkedIn"
-                width="40"
-                height="40"
-                className="icon"
-              />
-            </Nav.Link>
-            <Nav.Link href="https://github.com/Rakshith-Raj08" target="_blank" rel="noopener noreferrer">
-              <img
-                src={glogo} // Update with correct path
-                alt="GitHub"
-                width="40"
-                height="40"
-                className="icon"
-              />
-            </Nav.Link>
-            <Nav.Link href="mailto:rakshith2002raj@gmail.com">
-              <img
-                src={gmlogo} // Update with correct path
-                alt="Email"
-                width="40"
-                height="40"
-                className="icon"
-              />
-            </Nav.Link>
+            <Dropdown align="end"> {/* Align dropdown to the right */}
+              <Dropdown.Toggle as="span" id="dropdown-info" className="info-icon">
+                <AiFillInfoCircle size={30} /> {/* Set the size of the icon */}
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                <Dropdown.Item as={Link} to="/about-website">About the Website</Dropdown.Item>
+                <Dropdown.Item as={Link} to="/about-developer">About the Developer</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
           </Nav>
         </Navbar.Collapse>
       </Container>
