@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
+import axios from 'axios';
 import './SearchRecipes.css';
 
 const SearchRecipes = () => {
@@ -11,16 +12,17 @@ const SearchRecipes = () => {
   const handleBlur = () => setIsFocused(false);
   const handleChange = (e) => setSearchQuery(e.target.value);
 
-  // Dummy search function
-  const handleSearch = (e) => {
+  // Search function that queries the backend
+  const handleSearch = async (e) => {
     e.preventDefault();
-    // Mock search results
-    const results = searchQuery
-      ? ['Recipe 1', 'Recipe 2', 'Recipe 3'].filter((recipe) =>
-          recipe.toLowerCase().includes(searchQuery.toLowerCase())
-        )
-      : [];
-    setSearchResults(results);
+    try {
+      const response = await axios.get('http://localhost:5000/api/recipes', {
+        params: { query: searchQuery },
+      });
+      setSearchResults(response.data);
+    } catch (error) {
+      console.error('Error fetching search results:', error);
+    }
   };
 
   return (
@@ -47,7 +49,11 @@ const SearchRecipes = () => {
                       {searchResults.length > 0 ? (
                         searchResults.map((result, index) => (
                           <div key={index} className="result-item">
-                            {result}
+                            <h5>{result.recipe_name}</h5> {/* Display the recipe name */}
+                            <p>{result.description}</p> {/* Display the description */}
+                            <p>Prep Time: {result.prep_time} mins</p> {/* Display prep time */}
+                            <p>Cook Time: {result.cook_time} mins</p> {/* Display cook time */}
+                            <p>Servings: {result.servings}</p> {/* Display servings */}
                           </div>
                         ))
                       ) : (

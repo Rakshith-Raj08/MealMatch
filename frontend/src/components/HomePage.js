@@ -2,6 +2,7 @@
 import React from 'react';
 import { Container, Row, Col, Button, Carousel } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import axios from 'axios' ;
 
 const HomePage = () => {
   const recommendedRecipes = [
