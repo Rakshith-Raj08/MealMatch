@@ -1,25 +1,46 @@
-const pool = require('../config/db');
+const pool = require('../config/db'); // Assuming you're using pg-pool for database connections
 
+// Controller to get all recipes
 const getAllRecipes = async (req, res) => {
   try {
-    const { query } = req.query; // Get the query parameter from the request
-    let result;
-
-    if (query) {
-      // If a query parameter is provided, filter recipes based on it
-      result = await pool.query(
-        'SELECT * FROM public.recipes WHERE LOWER(recipe_name) LIKE LOWER($1) ORDER BY recipe_id ASC',
-        [`%${query}%`]
-      );
-    } else {
-      // If no query parameter is provided, return all recipes
-      result = await pool.query('SELECT * FROM public.recipes ORDER BY recipe_id ASC');
-    }
-
-    res.json(result.rows);
+    const result = await pool.query('SELECT recipe_id, recipe_name FROM recipes');
+    res.json(result.rows); // Return the list of recipes with their IDs and names
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch recipes' });
+    console.error('Error fetching recipes:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
-module.exports = { getAllRecipes };
+// Controller to get recipe details by ID
+const getRecipeById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const query = `
+      SELECT r.recipe_name, r.description, r.instructions, r.image_url, c.category_name, 
+             array_agg(i.ingredient_name) AS ingredients
+      FROM recipes r
+      JOIN recipe_ingredients ri ON r.recipe_id = ri.recipe_id
+      JOIN ingredients i ON ri.ingredient_id = i.ingredient_id
+      JOIN categories c ON r.category_id = c.category_id
+      WHERE r.recipe_id = $1
+      GROUP BY r.recipe_id, c.category_name;
+    `;
+
+    const result = await pool.query(query, [id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Recipe not found' });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Error fetching recipe details:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+module.exports = {
+  getAllRecipes,
+  getRecipeById
+};

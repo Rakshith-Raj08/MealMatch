@@ -1,8 +1,11 @@
-// routes/recipeRoutes.js
 const express = require('express');
 const router = express.Router();
-const { getAllRecipes } = require('../controllers/recipeController');
+const recipeController = require('../controllers/recipeController');
 
-router.get('/recipes', getAllRecipes);
+// Route to get all recipes based on a search query
+router.get('/recipes', recipeController.getAllRecipes);
+
+// Route to get a specific recipe by ID
+router.get('/recipes/:id', recipeController.getRecipeById);
 
 module.exports = router;

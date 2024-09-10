@@ -1,21 +1,33 @@
+/* src/components/Header.css */
+
 /* Ensure navbar background color */
 .navbar {
   background-color: #FABC3F;
   border-bottom: 2px solid #dee2e6;
+  position: sticky; /* Make the header sticky */
+  top: 0; /* Stick to the top of the viewport */
+  left: 0;
+  width: 100%; /* Full width */
+  z-index: 1000; /* Ensure it's above other content */
+  padding: 10px 20px; /* Adjust padding as needed */
 }
 
+/* Ensure container within navbar is styled correctly */
 .navbar .container {
   background-color: #FABC3F;
 }
 
+/* Adjust logo styling */
 .navbar-brand img {
   max-height: 50px;
 }
 
+/* Style logo */
 img.logo {
   border-radius: 10px;
 }
 
+/* Style for the info icon */
 .info-icon {
   cursor: pointer;
   color: white;
@@ -24,11 +36,12 @@ img.logo {
   margin-left: auto;
 }
 
-
+/* Remove default dropdown icon */
 .info-icon .dropdown-toggle::after {
   display: none;
 }
 
+/* Style navbar links */
 .navbar-nav {
   margin-left: auto;
 }
