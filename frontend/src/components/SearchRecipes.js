@@ -60,6 +60,7 @@ const SearchRecipes = () => {
   }, [debouncedSearchQuery]);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     fetchRecipes();
   }, [fetchRecipes]);
 
@@ -124,24 +125,29 @@ const SearchRecipes = () => {
               </Button>
             </Form>
             
-            {/* Display full recipe details when a recipe is selected */}
-            {selectedRecipe && (
-              <div className="selected-recipe mt-5">
-                <h3>{selectedRecipe.recipe_name}</h3>
-                <p><strong>Description:</strong> {selectedRecipe.description}</p>
-                <p><strong>Instructions:</strong> {selectedRecipe.instructions}</p>
-                <p><strong>Category:</strong> {selectedRecipe.category_name}</p>
-                <p><strong>Ingredients:</strong></p>
-                <ul>
-                  {selectedRecipe.ingredients.map((ingredient, index) => (
-                    <li key={index}>{ingredient}</li>
-                  ))}
-                </ul>
-                {selectedRecipe.image_url && (
-                  <img src={selectedRecipe.image_url} alt={selectedRecipe.recipe_name} className="img-fluid mt-3" />
+                {/* Display full recipe details when a recipe is selected */}
+                {selectedRecipe && (
+                  <div className="selected-recipe mt-5">
+                    {selectedRecipe.image_url && (
+                      <img
+                        src={selectedRecipe.image_url}
+                        alt={selectedRecipe.recipe_name}
+                        className="img-fluid mt-3"
+                      />
+                    )}
+                    <h3 className="mt-4">{selectedRecipe.recipe_name}</h3>
+                    <p><strong>Description:</strong> {selectedRecipe.description}</p>
+                    <p><strong>Instructions:</strong> {selectedRecipe.instructions}</p>
+                    <p><strong>Category:</strong> {selectedRecipe.category_name}</p>
+                    <p><strong>Ingredients:</strong></p>
+                    <ul>
+                      {selectedRecipe.ingredients.map((ingredient, index) => (
+                        <li key={index}>{ingredient}</li>
+                      ))}
+                    </ul>
+                  </div>
                 )}
-              </div>
-            )}
+
           </Col>
         </Row>
       </Container>

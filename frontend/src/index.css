@@ -9,8 +9,8 @@ html, body {
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background-color: #ff9800; /* Set the background color */
-  color: #000; /* Default text color */
+  background-color: #121212; /* Dark background color */
+  color: #e0e0e0; /* Light text color for contrast */
 }
 
 /* Ensure the main content covers the full viewport height */
@@ -19,34 +19,73 @@ body {
   padding: 20px;
 }
 
-/* Apply the yellow color to all buttons with higher specificity */
+/* Apply the dark color to all buttons with higher specificity */
 button, .btn {
-  background-color: #ff9800 !important; /* Yellow color */
+  background-color: #1f1f1f !important; /* Dark button color */
   border: none !important;
-  color: white !important; /* Text color */
+  color: #e0e0e0 !important; /* Light text color */
   border-radius: 0.25rem; /* Optional: Adjust border radius */
 }
 
 /* Change button color on hover */
 button:hover, .btn:hover {
-  background-color: #ff9900f1 !important; /* Slightly darker yellow on hover */
-  color: white !important; /* Ensure text color remains readable */
+  background-color: #333 !important; /* Slightly lighter dark color on hover */
+  color: #e0e0e0 !important; /* Ensure text color remains readable */
 }
 
 /* Adjust height of the carousel images */
 .carousel-item img {
-  height: 550px; /* Adjust height of the carousel images */
+  height: 700px; /* Adjust height of the carousel images */
   object-fit: cover; /* Ensure images cover the space */
 }
 
 /* Semi-transparent background for carousel captions */
 .carousel-caption {
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background for readability */
+  background-color: rgba(0, 0, 0, 0.7); /* Darker semi-transparent background for readability */
   border-radius: 10px;
 }
 
 /* Text color for carousel captions */
 .carousel-caption h3,
 .carousel-caption p {
-  color: #fff; /* Text color */
+  color: #e0e0e0; /* Light text color */
+}
+
+/* src/index.css */
+/* src/index.css */
+
+/* Styling for the icon container */
+.icon-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-container h5 {
+  margin: 0;
+  font-size: 14px; /* Adjust font size for the label */
+  color: #e0e0e0; /* Ensure text color matches the theme */
+}
+
+.icon-container svg {
+  color: #e0e0e0; /* Icon color */
+}
+
+/* Styling for buttons with subtle border */
+.bordered-button {
+  border: 2px solid #e0e0e0; /* Light border color */
+  border-radius: 0.25rem; /* Slightly rounded corners */
+  background-color: #1f1f1f; /* Button background color */
+}
+
+/* Change button color on hover */
+.bordered-button:hover {
+  background-color: #333; /* Slightly lighter dark color on hover */
+  color: #e0e0e0; /* Ensure text color remains readable */
+}
+
+/* Add space between carousel and buttons */
+.mt-4 {
+  margin-top: 3rem !important;/* Space above the button section */
 }

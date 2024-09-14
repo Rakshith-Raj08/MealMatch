@@ -1,26 +1,91 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
-import './SearchByIngredients.css';
+import axios from 'axios';
+import './SearchByIngredients.css'; // Make sure your CSS is loaded
 
-const SearchByIngredients = () => {
+// Utility function for debouncing
+const useDebounce = (value, delay) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+};
+
+const SearchIngredients = () => {
   const [isFocused, setIsFocused] = useState(false);
-  const [ingredients, setIngredients] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [ingredientSuggestions, setIngredientSuggestions] = useState([]);
+  const [selectedIngredients, setSelectedIngredients] = useState([]);
+
+  // Debounce the search query to reduce API calls
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
   const handleFocus = () => setIsFocused(true);
-  const handleBlur = () => setIsFocused(false);
-  const handleChange = (e) => setIngredients(e.target.value);
+  const handleBlur = () => {
+    setTimeout(() => {
+      setIsFocused(false);
+    }, 100);
+  };
 
-  // Dummy search function
-  const handleSearch = (e) => {
-    e.preventDefault();
-    // Mock search results
-    const results = ingredients
-      ? ['Recipe 1', 'Recipe 2', 'Recipe 3'].filter((recipe) =>
-          recipe.toLowerCase().includes(ingredients.toLowerCase())
-        )
-      : [];
-    setSearchResults(results);
+  const handleChange = (e) => setSearchQuery(e.target.value);
+
+  // Fetch ingredient suggestions
+  const fetchIngredients = useCallback(async () => {
+    if (debouncedSearchQuery.trim() === '') {
+      setIngredientSuggestions([]);
+      return;
+    }
+    try {
+      const response = await axios.get('http://localhost:5000/api/ingredients', {
+        params: { query: debouncedSearchQuery },
+      });
+      setIngredientSuggestions(response.data);
+    } catch (error) {
+      console.error('Error fetching ingredient suggestions:', error);
+    }
+  }, [debouncedSearchQuery]);
+
+  useEffect(() => {
+    fetchIngredients();
+  }, [fetchIngredients]);
+
+  const handleSelectIngredient = (ingredient) => {
+    setSelectedIngredients((prevState) => {
+      // Check if the ingredient is already in the selected list
+      if (prevState.includes(ingredient)) {
+        return prevState.filter((i) => i !== ingredient);
+      }
+      return [...prevState, ingredient];
+    });
+  
+    // Delay the clearing of search query and suggestions to allow the click to register
+    setTimeout(() => {
+      setSearchQuery('');
+      setIngredientSuggestions([]);
+    }, 100); // Small delay to ensure the click is processed
+  };
+  
+
+  const handleCheckboxChange = (ingredient) => {
+    setSelectedIngredients(prevState =>
+      prevState.includes(ingredient)
+        ? prevState.filter(item => item !== ingredient)
+        : [...prevState, ingredient]
+    );
+  };
+
+  const handleSearch = () => {
+    // Replace with real search logic based on selected ingredients
+    console.log('Searching for recipes with ingredients:', selectedIngredients);
   };
 
   return (
@@ -28,26 +93,30 @@ const SearchByIngredients = () => {
       <Container className="mt-5">
         <Row className="justify-content-center">
           <Col md={8}>
-            <h2 className="mb-4 text-center">Search by Ingredients</h2>
-            <Form onSubmit={handleSearch}>
-              <Form.Group controlId="ingredients">
-                <Form.Label>Enter ingredients (comma separated):</Form.Label>
+            <h2 className="mb-4 text-center">Search Ingredients</h2>
+            <Form onSubmit={(e) => e.preventDefault()}>
+              <Form.Group controlId="searchQuery">
+                <Form.Label>Enter ingredient:</Form.Label>
                 <div className={`popup-container ${isFocused ? 'active' : ''}`}>
                   <Form.Control
                     type="text"
-                    placeholder="E.g., chicken, curry powder, tomatoes"
+                    placeholder="E.g., Chicken"
                     onFocus={handleFocus}
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    value={ingredients}
+                    value={searchQuery}
                     className="search-bar"
                   />
-                  {isFocused && (
+                  {isFocused && searchQuery && (
                     <div className="search-results">
-                      {searchResults.length > 0 ? (
-                        searchResults.map((result, index) => (
-                          <div key={index} className="result-item">
-                            {result}
+                      {ingredientSuggestions.length > 0 ? (
+                        ingredientSuggestions.map((ingredient, index) => (
+                          <div
+                            key={index}
+                            className="result-item"
+                            onClick={() => handleSelectIngredient(ingredient.ingredient_name)}
+                          >
+                            {ingredient.ingredient_name}
                           </div>
                         ))
                       ) : (
@@ -57,10 +126,33 @@ const SearchByIngredients = () => {
                   )}
                 </div>
               </Form.Group>
-              <Button variant="primary" type="submit" className="mt-3">
+              <Button 
+                variant="primary" 
+                onClick={handleSearch} 
+                className="mt-3"
+              >
                 Search
               </Button>
             </Form>
+
+            {/* Render selected ingredients as checkboxes */}
+            {selectedIngredients.length > 0 && (
+              <div className="selected-ingredients mt-5">
+                <h4>Selected Ingredients:</h4>
+                <ul>
+                  {selectedIngredients.map((ingredient, index) => (
+                    <li key={index}>
+                      <Form.Check 
+                        type="checkbox" 
+                        label={ingredient} 
+                        checked={selectedIngredients.includes(ingredient)}
+                        onChange={() => handleCheckboxChange(ingredient)}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </Col>
         </Row>
       </Container>
@@ -68,4 +160,4 @@ const SearchByIngredients = () => {
   );
 };
 
-export default SearchByIngredients;
+export default SearchIngredients;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, Navbar, Nav, Dropdown } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { AiFillInfoCircle } from 'react-icons/ai'; // Import the filled InfoCircle icon from react-icons
+import { AiFillInfoCircle } from 'react-icons/ai'; 
 import './Header.css'; 
 import logo from '../assets/logo2.png'; 
 
@@ -21,9 +21,9 @@ const Header = () => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ml-auto">
-            <Dropdown align="end"> {/* Align dropdown to the right */}
+            <Dropdown align="end">
               <Dropdown.Toggle as="span" id="dropdown-info" className="info-icon">
-                <AiFillInfoCircle size={30} /> {/* Set the size of the icon */}
+                <AiFillInfoCircle size={30} />
               </Dropdown.Toggle>
               <Dropdown.Menu>
                 <Dropdown.Item as={Link} to="/about-website">About the Website</Dropdown.Item>

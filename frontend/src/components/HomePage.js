@@ -1,8 +1,7 @@
-// src/components/HomePage.js
 import React from 'react';
 import { Container, Row, Col, Button, Carousel } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import axios from 'axios' ;
+import { FaSearch, FaList } from 'react-icons/fa'; // Import icons
 
 const HomePage = () => {
   const recommendedRecipes = [
@@ -13,16 +12,6 @@ const HomePage = () => {
 
   return (
     <Container className="mt-4">
-      <Row className="justify-content-center mb-4">
-        <Col md={4} className="text-center">
-          <h5>Discover recipes for any meal. Find new dishes based on your preferences.</h5>
-          <Button variant="primary" as={Link} to="/search-recipes" className="my-3">Search Recipes</Button>
-        </Col>
-        <Col md={4} className="text-center">
-          <h5>Find recipes with what you have. Enter your ingredients to get meal ideas.</h5>
-          <Button variant="secondary" as={Link} to="/search-by-ingredients" className="my-3">Search by Ingredients</Button>
-        </Col>
-      </Row>
       <Row>
         <Col>
           <Carousel>
@@ -41,6 +30,28 @@ const HomePage = () => {
               </Carousel.Item>
             ))}
           </Carousel>
+        </Col>
+      </Row>
+      <Row className="mt-5"> {/* Added margin-top to create space */}
+        <Col>
+          <div className="button-container text-center">
+            <Row className="justify-content-center">
+              <Col md={4} className="mb-4">
+                <div className="icon-container">
+                  <FaSearch size={50} />
+                  <h5 className="mt-2">Discover recipes for any meal.</h5>
+                </div>
+                <Button variant="primary" as={Link} to="/search-recipes" className="mt-3 bordered-button w-100">Search Recipes</Button>
+              </Col>
+              <Col md={4} className="mb-4">
+                <div className="icon-container">
+                  <FaList size={50} />
+                  <h5 className="mt-2">Find recipes with what you have.</h5>
+                </div>
+                <Button variant="secondary" as={Link} to="/search-by-ingredients" className="mt-3 bordered-button w-100">Search by Ingredients</Button>
+              </Col>
+            </Row>
+          </div>
         </Col>
       </Row>
     </Container>
