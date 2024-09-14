@@ -14,6 +14,11 @@ const getAllRecipes = async (req, res) => {
 // Controller to get recipe details by ID
 const getRecipeById = async (req, res) => {
   const { id } = req.params;
+  console.log('Received recipe ID:', id); // Log the ID for debugging
+
+  if (!id || isNaN(id)) {
+    return res.status(400).json({ message: 'Invalid or missing Recipe ID' });
+  }
 
   try {
     const query = `
@@ -40,7 +45,40 @@ const getRecipeById = async (req, res) => {
   }
 };
 
+
+
+const searchRecipes = async (req, res) => {
+  try {
+    const { ingredients } = req.body;
+
+    // Check if ingredients are provided
+    if (!ingredients || ingredients.length === 0) {
+      return res.status(400).json({ message: 'No ingredients provided' });
+    }
+
+    const query = `
+      SELECT r.recipe_id, r.recipe_name, r.image_url
+      FROM recipes r
+      JOIN recipe_ingredients ri ON r.recipe_id = ri.recipe_id
+      JOIN ingredients i ON ri.ingredient_id = i.ingredient_id
+      WHERE i.ingredient_name = ANY($1::text[])
+      GROUP BY r.recipe_id;  -- Ensure to group by recipe_id
+    `;
+
+    const result = await pool.query(query, [ingredients]);
+
+    // Send the result to the frontend
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching recipes:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
+
 module.exports = {
   getAllRecipes,
-  getRecipeById
+  getRecipeById,
+  searchRecipes
 };
