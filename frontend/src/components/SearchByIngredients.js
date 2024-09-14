@@ -11,7 +11,7 @@ const useDebounce = (value, delay) => {
     const handler = setTimeout(() => {
       setDebouncedValue(value);
     }, delay);
-
+    window.scrollTo(0, 0);
     return () => {
       clearTimeout(handler);
     };
