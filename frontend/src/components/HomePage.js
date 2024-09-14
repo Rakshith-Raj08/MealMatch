@@ -5,9 +5,9 @@ import { FaSearch, FaList } from 'react-icons/fa'; // Import icons
 
 const HomePage = () => {
   const recommendedRecipes = [
-    { id: 1, title: 'Spaghetti Carbonara', description: 'A classic Italian pasta dish.', image: 'https://via.placeholder.com/150' },
-    { id: 2, title: 'Chicken Tikka Masala', description: 'A flavorful chicken curry.', image: 'https://via.placeholder.com/150' },
-    { id: 3, title: 'Caesar Salad', description: 'A fresh and crunchy salad.', image: 'https://via.placeholder.com/150' }
+    { id: 1, title: 'Tacos', description: 'A classic mexican snack.', image: 'https://images.pexels.com/photos/27590338/pexels-photo-27590338/free-photo-of-beet-carne-asada-tacos.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' },
+    { id: 2, title: 'Chicken Tikka Masala', description: 'A flavorful chicken curry.', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUcNTu6mSvUxTmg0k8qX70DsuxwrG-FqC29g&s' },
+    { id: 3, title: 'Chicken Biryani', description: 'A flavorful rice and meat god-gifted recipe!.', image: 'https://www.licious.in/blog/wp-content/uploads/2022/06/chicken-hyderabadi-biryani-01-750x750.jpg' }
   ];
 
   return (

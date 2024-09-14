@@ -85,6 +85,7 @@ const SearchIngredients = () => {
   };
 
   const handleSearch = async () => {
+    console.log('Selected Ingredients:', selectedIngredients); // Log selected ingredients
     try {
       const response = await axios.post('http://localhost:5000/api/recipes/search', {
         ingredients: selectedIngredients
@@ -99,12 +100,12 @@ const SearchIngredients = () => {
   const handleRecipeClick = async (recipe) => {
     console.log('Recipe clicked:', recipe); // Log the entire recipe object
     console.log('Recipe ID:', recipe.recipe_id); // Ensure recipe_id is defined and valid
-  
+
     if (!recipe.recipe_id) {
       console.error('Recipe ID is missing or undefined');
       return;
     }
-  
+
     try {
       const response = await axios.get(`http://localhost:5000/api/recipes/${recipe.recipe_id}`);
       setSelectedRecipe(response.data);
@@ -199,27 +200,71 @@ const SearchIngredients = () => {
             )}
 
             {/* Display full recipe details when a recipe is selected */}
-            {selectedRecipe && (
-              <div className="selected-recipe mt-5">
-                {selectedRecipe.image_url && (
-                  <img
-                    src={selectedRecipe.image_url}
-                    alt={selectedRecipe.recipe_name}
-                    className="img-fluid mt-3"
-                  />
-                )}
-                <h3 className="mt-4">{selectedRecipe.recipe_name}</h3>
-                <p><strong>Description:</strong> {selectedRecipe.description}</p>
-                <p><strong>Instructions:</strong> {selectedRecipe.instructions}</p>
-                <p><strong>Category:</strong> {selectedRecipe.category_name}</p>
-                <p><strong>Ingredients:</strong></p>
-                <ul>
-                  {selectedRecipe.ingredients.map((ingredient, index) => (
-                    <li key={index}>{ingredient}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
+          {selectedRecipe && (
+            <div className="selected-recipe mt-5">
+              {selectedRecipe.image_url && (
+                <img
+                  src={selectedRecipe.image_url}
+                  alt={selectedRecipe.recipe_name}
+                  className="img-fluid mt-3"
+                />
+              )}
+
+              {/* Calculate the percentage of matching ingredients */}
+              {(() => {
+                const totalRecipeIngredients = selectedRecipe.ingredients.length; // Total ingredients in the recipe
+                const matchedIngredients = selectedRecipe.ingredients.filter(ingredient =>
+                  selectedIngredients.includes(ingredient)
+                ).length; // How many recipe ingredients match the selected ingredients
+
+                const matchPercentage = ((matchedIngredients / totalRecipeIngredients) * 100).toFixed(2); // Percentage of recipe ingredients that match
+
+                return (
+                  <div className="ingredient-match-percentage">
+                    <h3 className="mt-4">{selectedRecipe.recipe_name}</h3>
+
+                    {/* Display percentage with gradient background */}
+                    <div 
+                      className="percentage-bar"
+                      style={{
+                        width: '100%',
+                        height: '30px',
+                        borderRadius: '5px',
+                        background: `linear-gradient(to right, green, red ${matchPercentage}%)`,
+                        textAlign: 'center',
+                        color: 'white',
+                        lineHeight: '30px'
+                      }}
+                    >
+                      {matchPercentage}%
+                    </div>
+                  </div>
+                );
+              })()}
+
+              <p><strong>Description:</strong> {selectedRecipe.description}</p>
+              <p><strong>Instructions:</strong> {selectedRecipe.instructions}</p>
+              <p><strong>Category:</strong> {selectedRecipe.category_name}</p>
+
+              {/* Highlight matching ingredients in green */}
+              <ul>
+                {selectedRecipe.ingredients.map((ingredient, index) => (
+                  <li 
+                    key={index} 
+                    style={{
+                      color: selectedIngredients.includes(ingredient) ? 'green' : 'inherit',
+                      fontWeight: selectedIngredients.includes(ingredient) ? 'bold' : 'normal'
+                    }}
+                  >
+                    {ingredient}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+
+
           </Col>
         </Row>
       </Container>
