@@ -6,6 +6,7 @@ import AboutDeveloper from './components/AboutDeveloper';
 import Header from './components/Header';
 import SearchByIngredients from './components/SearchByIngredients';
 import SearchRecipes from  './components/SearchRecipes' ;
+import GyMeals from './components/gymmeals.js' ; 
 import './index.css'; // Ensure  this import is correct
 
 const App = () => {
@@ -19,6 +20,7 @@ const App = () => {
           <Route path="/about-developer" element={<AboutDeveloper />} />
           <Route path="/search-by-ingredients" element={<SearchByIngredients />} />
           <Route path="/search-recipes" element={<SearchRecipes />} />
+          <Route path="/gym-meals" element={<GyMeals />} />
         </Routes>
       </div>
     </Router>

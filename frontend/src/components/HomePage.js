@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, Row, Col, Button, Carousel } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { FaSearch, FaList } from 'react-icons/fa'; // Import icons
+import { FaSearch, FaList, FaDumbbell } from 'react-icons/fa'; // Import gym icon
 
 const HomePage = () => {
   const recommendedRecipes = [
@@ -25,7 +25,6 @@ const HomePage = () => {
                 <Carousel.Caption>
                   <h3>{recipe.title}</h3>
                   <p>{recipe.description}</p>
-                  <Button variant="primary" as={Link} to={`/recipe/${recipe.id}`}>View Recipe</Button>
                 </Carousel.Caption>
               </Carousel.Item>
             ))}
@@ -49,6 +48,13 @@ const HomePage = () => {
                   <h5 className="mt-2">Find recipes with what you have.</h5>
                 </div>
                 <Button variant="secondary" as={Link} to="/search-by-ingredients" className="mt-3 bordered-button w-100">Search by Ingredients</Button>
+              </Col>
+              <Col md={4} className="mb-4"> {/* Gym icon section */}
+                <div className="icon-container">
+                  <FaDumbbell size={50} />
+                  <h5 className="mt-2">Get customized gym meals.</h5>
+                </div>
+                <Button variant="success" as={Link} to="/gym-meals" className="mt-3 bordered-button w-100">Gym Meal Plans</Button>
               </Col>
             </Row>
           </div>
