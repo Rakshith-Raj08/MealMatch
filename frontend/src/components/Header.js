@@ -26,8 +26,8 @@ const Header = () => {
                 <AiFillInfoCircle size={30} />
               </Dropdown.Toggle>
               <Dropdown.Menu>
-                <Dropdown.Item as={Link} to="/about-website">About the Website</Dropdown.Item>
-                <Dropdown.Item as={Link} to="/about-developer">About the Developer</Dropdown.Item>
+                <Dropdown.Item as={Link} to="/login">Login</Dropdown.Item>
+                <Dropdown.Item as={Link} to="/register">Register</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
           </Nav>
