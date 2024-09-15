@@ -52,9 +52,9 @@ const HomePage = () => {
               <Col md={4} className="mb-4"> {/* Gym icon section */}
                 <div className="icon-container">
                   <FaDumbbell size={50} />
-                  <h5 className="mt-2">Get customized gym meals.</h5>
+                  <h5 className="mt-2">Get customized fitness meals.</h5>
                 </div>
-                <Button variant="success" as={Link} to="/gym-meals" className="mt-3 bordered-button w-100">Gym Meal Plans</Button>
+                <Button variant="success" as={Link} to="/gym-meals" className="mt-3 bordered-button w-100">Fitness Meal Plans</Button>
               </Col>
             </Row>
           </div>

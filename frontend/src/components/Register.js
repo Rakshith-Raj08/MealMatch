@@ -1,5 +1,4 @@
-// src/pages/Register.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Form, Button, Card, Alert } from 'react-bootstrap';
 import axios from 'axios';
 
@@ -10,6 +9,11 @@ const Register = () => {
     password: '',
   });
   const [message, setMessage] = useState('');
+
+  // Scroll to top when component is mounted
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Container, Row, Col, Form, Button } from 'react-bootstrap';
+import { Container, Row, Col, Form, Button, Card, Alert } from 'react-bootstrap';
 import axios from 'axios';
 import './SearchRecipes.css';
 
@@ -25,13 +25,13 @@ const SearchRecipes = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [selectedRecipe, setSelectedRecipe] = useState(null);
+  const [message, setMessage] = useState('');
 
   // Debounce the search query to reduce API calls
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
   const handleFocus = () => setIsFocused(true);
   const handleBlur = () => {
-    // Delay hiding search results to allow for clicks
     setTimeout(() => {
       setIsFocused(false);
       if (!searchQuery) {
@@ -48,20 +48,21 @@ const SearchRecipes = () => {
       setSearchResults([]); // Clear results if the input is empty
       return;
     }
-    
+
     try {
       const response = await axios.get('http://localhost:5000/api/recipes', {
-        params: { query: debouncedSearchQuery }, // Send the search query to the backend
+        params: { query: debouncedSearchQuery },
       });
 
-      setSearchResults(response.data); // Set the filtered search results
+      setSearchResults(response.data);
       setSelectedRecipe(null); // Reset selected recipe when a new search is performed
+      setMessage(''); // Clear any previous message
     } catch (error) {
       console.error('Error fetching search results:', error);
+      setMessage('Error fetching search results.');
     }
   }, [debouncedSearchQuery]);
 
-  // Trigger the search whenever the debounced search query changes
   useEffect(() => {
     window.scrollTo(0, 0);
     fetchRecipes();
@@ -71,66 +72,69 @@ const SearchRecipes = () => {
     try {
       const response = await axios.get(`http://localhost:5000/api/recipes/${recipeId}`);
       if (response.status === 200) {
-        setSelectedRecipe(response.data); // Store the full recipe details
-        setSearchResults([]); // Hide search results after selection
+        setSelectedRecipe(response.data);
+        setSearchResults([]);
+        setMessage('');
       } else {
-        console.error('Recipe not found');
+        setMessage('Recipe not found.');
       }
     } catch (error) {
       console.error('Error fetching recipe details:', error);
+      setMessage('Error fetching recipe details.');
     }
   };
 
   return (
-    <div className={`search-recipes-container ${isFocused ? 'focused' : ''}`}>
-      <Container className="mt-5">
-        <Row className="justify-content-center">
-          <Col md={8}>
-            <h2 className="mb-4 text-center">Search Recipes</h2>
-            <Form onSubmit={(e) => e.preventDefault()}>
-              <Form.Group controlId="searchQuery">
-                <Form.Label>Enter recipe name or keywords:</Form.Label>
-                <div className={`popup-container ${isFocused ? 'active' : ''}`}>
-                  <Form.Control
-                    type="text"
-                    placeholder="E.g., Chicken Curry"
-                    onFocus={handleFocus}
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    value={searchQuery}
-                    className="search-bar"
-                  />
-                  {isFocused && searchQuery && (
-                    <div className="search-results">
-                      {searchResults.length > 0 ? (
-                        searchResults.map((result) => (
-                          <div
-                            key={result.recipe_id} // Use `recipe_id` instead of `id`
-                            className="result-item"
-                            onClick={() => handleSelectRecipe(result.recipe_id)}
-                          >
-                            <h5>{result.recipe_name}</h5> {/* Display the recipe name */}
-                          </div>
-                        ))
-                      ) : (
-                        <div className="no-match">No match found</div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </Form.Group>
-              <Button 
-                variant="primary" 
-                onClick={fetchRecipes} 
-                className="mt-3"
-              >
-                Search
-              </Button>
-            </Form>
-            
-            {/* Display full recipe details when a recipe is selected */}
-            {selectedRecipe && (
-              <div className="selected-recipe mt-5">
+    <Container className="mt-5">
+      <Row className="justify-content-center">
+        <Col md={8}>
+          <Card>
+            <Card.Header as="h5">Search Recipes</Card.Header>
+            <Card.Body>
+              {message && <Alert variant="danger">{message}</Alert>}
+              <Form onSubmit={(e) => e.preventDefault()}>
+                <Form.Group controlId="searchQuery">
+                  <Form.Label>Enter recipe name or keywords:</Form.Label>
+                  <div className={`popup-container ${isFocused ? 'active' : ''}`}>
+                    <Form.Control
+                      type="text"
+                      placeholder="E.g., Chicken Curry"
+                      onFocus={handleFocus}
+                      onBlur={handleBlur}
+                      onChange={handleChange}
+                      value={searchQuery}
+                      className="search-bar"
+                    />
+                    {isFocused && searchQuery && (
+                      <div className="search-results">
+                        {searchResults.length > 0 ? (
+                          searchResults.map((result) => (
+                            <div
+                              key={result.recipe_id}
+                              className="result-item"
+                              onClick={() => handleSelectRecipe(result.recipe_id)}
+                            >
+                              <h5>{result.recipe_name}</h5>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="no-match">No match found</div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </Form.Group>
+                <Button variant="primary" onClick={fetchRecipes} className="mt-3">
+                  Search
+                </Button>
+              </Form>
+            </Card.Body>
+          </Card>
+
+          {/* Display full recipe details when a recipe is selected */}
+          {selectedRecipe && (
+            <Card className="mt-5">
+              <Card.Body>
                 {selectedRecipe.image_url && (
                   <img
                     src={selectedRecipe.image_url}
@@ -148,12 +152,12 @@ const SearchRecipes = () => {
                     <li key={index}>{ingredient}</li>
                   ))}
                 </ul>
-              </div>
-            )}
-          </Col>
-        </Row>
-      </Container>
-    </div>
+              </Card.Body>
+            </Card>
+          )}
+        </Col>
+      </Row>
+    </Container>
   );
 };
 

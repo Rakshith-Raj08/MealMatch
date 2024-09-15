@@ -71,7 +71,8 @@ app.post('/login', async (req, res) => {
     // Set token in cookie
     res.cookie('authToken', token, { httpOnly: true });
 
-    res.status(200).json({ message: 'Login successful' });
+    // Respond with token and username
+    res.status(200).json({ token, username: user.username, message: 'Login successful' });
   } catch (error) {
     console.error('Error logging in:', error);
     res.status(500).json({ message: 'Server error' });
