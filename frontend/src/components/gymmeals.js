@@ -5,7 +5,7 @@ import './gymmeals.css';
 
 const GymMeals = () => {
   const [caloriesPerDay, setCaloriesPerDay] = useState('100');
-  const [proteinRange, setProteinRange] = useState({ min: '100', max: '5000' });
+  const [proteinRequired, setProteinRequired] = useState('100'); // Single protein field
   const [numMeals, setNumMeals] = useState(3); // Default to 3 meals per day
   const [filters, setFilters] = useState({
     vegOnly: false,
@@ -29,11 +29,8 @@ const GymMeals = () => {
         ...filters,
         [name]: checked,
       });
-    } else if (name === 'minProtein' || name === 'maxProtein') {
-      setProteinRange({
-        ...proteinRange,
-        [name === 'minProtein' ? 'min' : 'max']: parseInt(value, 10), // Convert protein to integer
-      });
+    } else if (name === 'proteinRequired') {
+      setProteinRequired(parseInt(value, 10)); // Convert protein to integer
     } else if (name === 'caloriesPerDay') {
       setCaloriesPerDay(parseInt(value, 10)); // Convert calories to integer
     } else if (name === 'numMeals') {
@@ -51,7 +48,7 @@ const GymMeals = () => {
     // Prepare the data to send to the backend for filtering meals
     const requestData = {
       caloriesPerDay,
-      proteinRange,
+      proteinRequired,
       numMeals,
       caloriesPerMeal,
       filters,
@@ -98,23 +95,13 @@ const GymMeals = () => {
                 min={1}
               />
             </Form.Group>
-            <Form.Group controlId="minProtein">
-              <Form.Label>Protein Needed (Min)</Form.Label>
+            <Form.Group controlId="proteinRequired">
+              <Form.Label>Protein Required (g)</Form.Label>
               <Form.Control
                 type="number"
-                placeholder="Min protein (g)"
-                name="minProtein"
-                value={proteinRange.min}
-                onChange={handleInputChange}
-              />
-            </Form.Group>
-            <Form.Group controlId="maxProtein">
-              <Form.Label>Protein Needed (Max)</Form.Label>
-              <Form.Control
-                type="number"
-                placeholder="Max protein (g)"
-                name="maxProtein"
-                value={proteinRange.max}
+                placeholder="Protein required per meal (g)"
+                name="proteinRequired"
+                value={proteinRequired}
                 onChange={handleInputChange}
               />
             </Form.Group>

@@ -1,3 +1,4 @@
+// server.js
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -16,12 +17,15 @@ app.use(cors({
 app.use(express.json()); // Parse JSON bodies
 app.use(cookieParser()); // Parse cookies
 
-// Routes
-const recipeRoutes = require('./routes/recipeRoutes'); // Import the recipe routes
-const ingredientRoutes = require('./routes/ingredientRoutes'); // Import the ingredient routes
+// Import routes
+const gymRecipeRoutes = require('./routes/gymrecipes');
+const recipeRoutes = require('./routes/recipeRoutes');
+const ingredientRoutes = require('./routes/ingredientRoutes');
 
-app.use('/api', recipeRoutes); // Prefix all recipe routes with /api
-app.use('/api', ingredientRoutes); // Prefix all ingredient routes with /api
+// Routes
+app.use('/api/recipes', gymRecipeRoutes); // Prefix gym recipes with /api/recipes
+app.use('/api/recipes', recipeRoutes); // Prefix recipe routes with /api/recipes
+app.use('/api/ingredients', ingredientRoutes); // Prefix ingredient routes with /api/ingredients
 
 // User registration
 app.post('/register', async (req, res) => {
@@ -106,6 +110,12 @@ const authenticate = (req, res, next) => {
 // Protected route example
 app.get('/protected', authenticate, (req, res) => {
   res.json('This is protected data');
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something went wrong!');
 });
 
 // Start the server
