@@ -1,3 +1,4 @@
+//server.js
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -25,7 +26,7 @@ const gymMealRoutes = require('./routes/gymMealRoutes');
 app.use('/api/spoonacular-recipes', spoonacularRoutes);
 app.use('/api', recipeRoutes); // Prefix all recipe routes with /api
 app.use('/api', ingredientRoutes); // Prefix all ingredient routes with /api
-app.use('/api', gymMealRoutes);
+app.use('/api/gym-meals', gymMealRoutes);
 
 // User registration
 app.post('/register', async (req, res) => {

@@ -4,12 +4,13 @@ import axios from 'axios';
 import './gymmeals.css';
 
 const GymMeals = () => {
-  const [caloriesPerDay, setCaloriesPerDay] = useState(100);
-  const [proteinRequired, setProteinRequired] = useState(100); // Single protein field
+  const [caloriesPerDay, setCaloriesPerDay] = useState(4000);
+  const [proteinRequired, setProteinRequired] = useState(50); // Single protein field
   const [numMeals, setNumMeals] = useState(3); // Default to 3 meals per day
   const [vegOnly, setVegOnly] = useState(false); // Vegetarian Only filter
   const [message, setMessage] = useState('');
   const [mealRecommendations, setMealRecommendations] = useState([]);
+  const [rawData, setRawData] = useState(null); // Store raw response for debugging
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -42,9 +43,11 @@ const GymMeals = () => {
 
     try {
       // Send request to the backend to get meal recommendations
-      const response = await axios.post('http://localhost:5000/api/gymmeals', requestData);
+      const response = await axios.post('http://localhost:5000/api/gym-meals/gymmeals', requestData);
       console.log('Meal recommendations:', response.data);
+
       setMealRecommendations(response.data); // Update state with meal recommendations
+      setRawData(response.data); // Store raw data for debugging
       setMessage('Meal recommendations retrieved successfully!');
     } catch (error) {
       console.error('Error fetching meal recommendations:', error);
@@ -116,6 +119,15 @@ const GymMeals = () => {
                     <ListGroup.Item key={meal.id}>{meal.name}</ListGroup.Item>
                   ))}
                 </ListGroup>
+              </Card.Body>
+            </Card>
+          )}
+
+          {rawData && (
+            <Card className="mt-4">
+              <Card.Header as="h5">Raw Response Data</Card.Header>
+              <Card.Body>
+                <pre>{JSON.stringify(rawData, null, 2)}</pre> {/* Pretty-print JSON */}
               </Card.Body>
             </Card>
           )}
