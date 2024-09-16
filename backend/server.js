@@ -20,10 +20,12 @@ app.use(cookieParser()); // Parse cookies
 const spoonacularRoutes = require('./routes/spoonacularRoutes');
 const recipeRoutes = require('./routes/recipeRoutes'); // Import the recipe routes
 const ingredientRoutes = require('./routes/ingredientRoutes'); // Import the ingredient routes
+const gymMealRoutes = require('./routes/gymMealRoutes');
 
 app.use('/api/spoonacular-recipes', spoonacularRoutes);
 app.use('/api', recipeRoutes); // Prefix all recipe routes with /api
 app.use('/api', ingredientRoutes); // Prefix all ingredient routes with /api
+app.use('/api', gymMealRoutes);
 
 // User registration
 app.post('/register', async (req, res) => {
