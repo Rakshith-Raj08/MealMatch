@@ -1,6 +1,5 @@
 const { spawn } = require('child_process');
 const path = require('path');
-const pool = require('../config/db'); // Ensure this path is correct
 
 // Function to get meal recommendations based on user input
 const getMealRecommendations = async (req, res) => {
@@ -26,7 +25,7 @@ const getMealRecommendations = async (req, res) => {
       error += data.toString();
     });
 
-    pythonProcess.on('close', async (code) => {
+    pythonProcess.on('close', (code) => {
       console.log(`Python script exited with code ${code}`);
       if (code !== 0) {
         console.error('Python script error:', error);
@@ -49,20 +48,8 @@ const getMealRecommendations = async (req, res) => {
           return res.status(404).json({ message: 'No recommendations found' });
         }
 
-        const mealIds = recommendations.map(meal => meal.id);
-
-        // Fetch meal details from PostgreSQL
-        const mealDetailsQuery = `
-          SELECT id, name FROM meals
-          WHERE id = ANY($1::int[])
-        `;
-        const mealDetails = await pool.query(mealDetailsQuery, [mealIds]);
-
-        if (mealDetails.rows.length === 0) {
-          return res.status(404).json({ message: 'No meal details found' });
-        }
-
-        res.json(mealDetails.rows);
+        // Directly send the recommendations to the frontend
+        res.json(recommendations);
       } catch (error) {
         console.error('Error parsing recommendations:', error);
         res.status(500).json({ message: 'Error parsing recommendations' });

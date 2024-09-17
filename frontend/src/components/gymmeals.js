@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, Form, Button, Card, Alert, ListGroup } from 'react-bootstrap';
+import { Container, Form, Button, Card, Alert, Row, Col, Badge } from 'react-bootstrap';
 import axios from 'axios';
 import './gymmeals.css';
 
@@ -10,7 +10,6 @@ const GymMeals = () => {
   const [vegOnly, setVegOnly] = useState(false); // Vegetarian Only filter
   const [message, setMessage] = useState('');
   const [mealRecommendations, setMealRecommendations] = useState([]);
-  const [rawData, setRawData] = useState(null); // Store raw response for debugging
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -47,7 +46,6 @@ const GymMeals = () => {
       console.log('Meal recommendations:', response.data);
 
       setMealRecommendations(response.data); // Update state with meal recommendations
-      setRawData(response.data); // Store raw data for debugging
       setMessage('Meal recommendations retrieved successfully!');
     } catch (error) {
       console.error('Error fetching meal recommendations:', error);
@@ -55,9 +53,22 @@ const GymMeals = () => {
     }
   };
 
+  const groupMealsByDay = (meals, numMealsPerDay) => {
+    const days = [];
+    for (let i = 0; i < 7; i++) {
+      const dayMeals = meals.find(day => day.day === i + 1)?.meals || [];
+      days.push(dayMeals); // Ensure each day has an array, even if empty
+    }
+    return days;
+  };
+
+  const daysWithMeals = groupMealsByDay(mealRecommendations, numMeals); // Group meals by day
+
+  console.log('Days with meals:', daysWithMeals); // Debugging output
+
   return (
     <Container className="mt-5">
-      <Card>
+      <Card className="shadow-lg">
         <Card.Header as="h5">Customize Your Gym Meals</Card.Header>
         <Card.Body>
           {message && <Alert variant="info">{message}</Alert>}
@@ -85,7 +96,7 @@ const GymMeals = () => {
               />
             </Form.Group>
             <Form.Group controlId="proteinRequired">
-              <Form.Label>Protein Required (g)</Form.Label>
+              <Form.Label>Protein Required (g) Per Meal</Form.Label>
               <Form.Control
                 type="number"
                 placeholder="Protein required per meal (g)"
@@ -109,30 +120,43 @@ const GymMeals = () => {
               Get Meal Plan
             </Button>
           </Form>
-
-          {mealRecommendations.length > 0 && (
-            <Card className="mt-4">
-              <Card.Header as="h5">Recommended Meals</Card.Header>
-              <Card.Body>
-                <ListGroup>
-                  {mealRecommendations.map(meal => (
-                    <ListGroup.Item key={meal.id}>{meal.name}</ListGroup.Item>
-                  ))}
-                </ListGroup>
-              </Card.Body>
-            </Card>
-          )}
-
-          {rawData && (
-            <Card className="mt-4">
-              <Card.Header as="h5">Raw Response Data</Card.Header>
-              <Card.Body>
-                <pre>{JSON.stringify(rawData, null, 2)}</pre> {/* Pretty-print JSON */}
-              </Card.Body>
-            </Card>
-          )}
         </Card.Body>
       </Card>
+
+      {/* Meal Recommendations Section Outside the Card */}
+      {daysWithMeals.flat().length > 0 && (
+        <div className="mt-5">
+          <h3 className="text-center mb-4">Recommended Meals for 7 Days</h3>
+          {daysWithMeals.map((dayMeals, dayIndex) => (
+            <div key={dayIndex} className="mb-5">
+              <h4>Day {dayIndex + 1}</h4>
+              <Row>
+                {dayMeals.map((meal, mealIndex) => (
+                  <Col key={mealIndex} md={4}>
+                    <Card className="meal-card mb-4 shadow-sm">
+                      <Card.Img variant="top" src={meal.image} alt={meal.title} className="meal-image" />
+                      <Card.Body>
+                        <Card.Title className="text-center">{meal.title}</Card.Title>
+                        <div className="d-flex justify-content-around mt-3">
+                          <Badge bg="info" pill>
+                            <strong>{meal.calories}</strong> kcal
+                          </Badge>
+                          <Badge bg="success" pill>
+                            <strong>{meal.protein}</strong> g Protein
+                          </Badge>
+                        </div>
+                        <Card.Text className="mt-3 text-muted">
+                          This meal provides a balanced amount of calories and protein to help you meet your daily goals.
+                        </Card.Text>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                ))}
+              </Row>
+            </div>
+          ))}
+        </div>
+      )}
     </Container>
   );
 };
