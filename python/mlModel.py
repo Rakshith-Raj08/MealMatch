@@ -4,6 +4,8 @@ import numpy as np
 import json
 import requests
 from itertools import combinations
+from dotenv import load_dotenv
+import os
 
 def fetch_recipes(api_key, calories_per_day, protein_required, veg_only):
     url = 'https://api.spoonacular.com/recipes/complexSearch'
@@ -32,7 +34,14 @@ def main():
     calories_per_meal = float(sys.argv[4])
     veg_only = sys.argv[5].lower() in ['true', '1', 't']
 
-    api_key = 'fd2731cfe41d4126a64b323c4a040195'
+    # Load environment variables
+    load_dotenv()
+    api_key = os.getenv('SPOONACULAR_API_KEY')
+
+    if not api_key:
+        print("API key not found in environment variables.")
+        sys.exit(1)
+
     data = fetch_recipes(api_key, calories_per_day, protein_required, veg_only)
     recipes = data.get('results', [])
 
@@ -64,11 +73,10 @@ def main():
         print("No valid recipes with calorie and protein information.")
         sys.exit(1)
 
-    used_indices = set()
     recommendations = []
-    day = 1
+    used_indices = set()
 
-    while day <= 7:
+    for day in range(1, 8):  # 7 days of recommendations
         valid_combinations = []
         for combo in combinations(df.index, num_meals):
             if any(index in used_indices for index in combo):
@@ -85,8 +93,18 @@ def main():
             valid_combinations.append((score, selected_meals))
 
         if not valid_combinations:
-            print("Not enough unique recipes to generate a full meal plan.")
-            sys.exit(1)
+            # If not enough unique recipes, reuse previously used ones
+            print(f"Not enough unique recipes for day {day}, reusing recipes from previous days.")
+            for combo in combinations(df.index, num_meals):
+                selected_meals = df.loc[list(combo)]
+                total_calories = selected_meals['calories'].sum()
+                total_protein = selected_meals['protein'].sum()
+
+                calorie_diff = abs(total_calories - calories_per_day)
+                protein_diff = abs(total_protein - protein_required)
+                score = calorie_diff + protein_diff
+
+                valid_combinations.append((score, selected_meals))
 
         valid_combinations.sort(key=lambda x: x[0])
         best_combo = valid_combinations[0]
@@ -97,8 +115,8 @@ def main():
             "meals": best_meals.to_dict(orient='records')
         })
 
-        used_indices.update(best_meals.index)  # Update used indices to avoid reuse
-        day += 1
+        # Update used_indices even if reusing recipes
+        used_indices.update(best_meals.index)
 
     print(json.dumps(recommendations, indent=2))
 

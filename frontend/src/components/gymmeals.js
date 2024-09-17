@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Form, Button, Card, Alert, Row, Col, Badge } from 'react-bootstrap';
 import axios from 'axios';
 import './gymmeals.css';
@@ -10,6 +10,11 @@ const GymMeals = () => {
   const [vegOnly, setVegOnly] = useState(false); // Vegetarian Only filter
   const [message, setMessage] = useState('');
   const [mealRecommendations, setMealRecommendations] = useState([]);
+
+  useEffect(() => {
+    // Scroll to the top when the component mounts
+    window.scrollTo(0, 0);
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;

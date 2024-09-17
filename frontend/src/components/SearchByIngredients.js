@@ -32,6 +32,11 @@ const SearchIngredients = () => {
   // Debounced search query
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
+  // Scroll to top when the component is mounted
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   const handleFocus = () => setIsFocused(true);
   const handleBlur = () => {
     setTimeout(() => {

@@ -91,7 +91,7 @@ const SearchRecipes = () => {
           <Card>
             <Card.Header as="h5">Search Recipes</Card.Header>
             <Card.Body>
-              {message && <Alert variant="danger">{message}</Alert>}
+              {message && <Alert variant="info">{message}</Alert>}
               <Form onSubmit={(e) => e.preventDefault()}>
                 <Form.Group controlId="searchQuery">
                   <Form.Label>Enter recipe name or keywords:</Form.Label>
