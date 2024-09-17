@@ -3,15 +3,17 @@ import pandas as pd
 import numpy as np
 import json
 import requests
-from itertools import combinations
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import MinMaxScaler
 from dotenv import load_dotenv
 import os
+from itertools import combinations
 
 def fetch_recipes(api_key, calories_per_day, protein_required, veg_only):
     url = 'https://api.spoonacular.com/recipes/complexSearch'
     params = {
         'apiKey': api_key,
-        'number': 60,  # Fetch more than needed to ensure we have enough unique recipes
+        'number': 60,
         'maxCalories': calories_per_day,
         'minProtein': protein_required,
         'diet': 'vegetarian' if veg_only else 'none',
@@ -34,7 +36,6 @@ def main():
     calories_per_meal = float(sys.argv[4])
     veg_only = sys.argv[5].lower() in ['true', '1', 't']
 
-    # Load environment variables
     load_dotenv()
     api_key = os.getenv('SPOONACULAR_API_KEY')
 
@@ -73,6 +74,22 @@ def main():
         print("No valid recipes with calorie and protein information.")
         sys.exit(1)
 
+    # Train a simple ML model to predict healthiness
+    model = LinearRegression()
+    X = df[['calories', 'protein']]
+    y = df['calories']  # This can be adjusted based on your healthiness definition
+    model.fit(X, y)
+
+    # Predict healthiness index
+    df['healthiness_index'] = model.predict(df[['calories', 'protein']])
+
+    # Normalize healthiness index to range [0, 1]
+    scaler = MinMaxScaler()
+    df[['healthiness_index']] = scaler.fit_transform(df[['healthiness_index']])
+
+    # Reverse the healthiness index: Higher values are worse, so we subtract from 1
+    df['healthiness_index'] = 1 - df['healthiness_index']
+
     recommendations = []
     used_indices = set()
 
@@ -80,25 +97,31 @@ def main():
         valid_combinations = []
         for combo in combinations(df.index, num_meals):
             if any(index in used_indices for index in combo):
-                continue  # Skip if any recipe is already used
+                continue
 
             selected_meals = df.loc[list(combo)]
             total_calories = selected_meals['calories'].sum()
             total_protein = selected_meals['protein'].sum()
 
+            # Predict using the model
+            X_test = pd.DataFrame([[total_calories, total_protein]], columns=['calories', 'protein'])
+            predicted_value = model.predict(X_test)[0]
+
             calorie_diff = abs(total_calories - calories_per_day)
             protein_diff = abs(total_protein - protein_required)
-            score = calorie_diff + protein_diff
+            score = calorie_diff + protein_diff  # Simplified scoring logic
 
             valid_combinations.append((score, selected_meals))
 
         if not valid_combinations:
-            # If not enough unique recipes, reuse previously used ones
             print(f"Not enough unique recipes for day {day}, reusing recipes from previous days.")
             for combo in combinations(df.index, num_meals):
                 selected_meals = df.loc[list(combo)]
                 total_calories = selected_meals['calories'].sum()
                 total_protein = selected_meals['protein'].sum()
+
+                X_test = pd.DataFrame([[total_calories, total_protein]], columns=['calories', 'protein'])
+                predicted_value = model.predict(X_test)[0]
 
                 calorie_diff = abs(total_calories - calories_per_day)
                 protein_diff = abs(total_protein - protein_required)
@@ -112,10 +135,9 @@ def main():
 
         recommendations.append({
             "day": day,
-            "meals": best_meals.to_dict(orient='records')
+            "meals": best_meals[['title', 'image', 'calories', 'protein', 'healthiness_index']].to_dict(orient='records')
         })
 
-        # Update used_indices even if reusing recipes
         used_indices.update(best_meals.index)
 
     print(json.dumps(recommendations, indent=2))

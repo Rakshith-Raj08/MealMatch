@@ -1,15 +1,17 @@
 const { spawn } = require('child_process');
 const path = require('path');
 
-// Function to get meal recommendations based on user input
 const getMealRecommendations = async (req, res) => {
-  const { caloriesPerDay, proteinRequired, numMeals, caloriesPerMeal, vegOnly } = req.body;
+  const { caloriesPerDay, proteinRequired, numMeals, vegOnly } = req.body;
 
   try {
+    // Calculate calories per meal
+    const caloriesPerMeal = caloriesPerDay / numMeals;
+
     // Path to the Python script
     const pythonScriptPath = path.join(__dirname, '../../python/mlModel.py');
 
-    // Call Python script for prediction
+    // Call Python script with the expected arguments
     const pythonProcess = spawn('python3', [pythonScriptPath, caloriesPerDay, proteinRequired, numMeals, caloriesPerMeal, vegOnly]);
 
     let result = '';
@@ -37,9 +39,6 @@ const getMealRecommendations = async (req, res) => {
       const jsonEnd = result.lastIndexOf(']') + 1;
       const jsonString = result.substring(jsonStart, jsonEnd);
 
-      // Log the extracted JSON to verify correctness
-      console.log('Extracted JSON:', jsonString);
-
       try {
         const recommendations = JSON.parse(jsonString);
         console.log('Recommendations:', recommendations);
@@ -48,7 +47,7 @@ const getMealRecommendations = async (req, res) => {
           return res.status(404).json({ message: 'No recommendations found' });
         }
 
-        // Directly send the recommendations to the frontend
+        // Send the meal recommendations directly to the frontend
         res.json(recommendations);
       } catch (error) {
         console.error('Error parsing recommendations:', error);

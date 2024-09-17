@@ -5,14 +5,13 @@ import './gymmeals.css';
 
 const GymMeals = () => {
   const [caloriesPerDay, setCaloriesPerDay] = useState(4000);
-  const [proteinRequired, setProteinRequired] = useState(50); // Single protein field
-  const [numMeals, setNumMeals] = useState(3); // Default to 3 meals per day
-  const [vegOnly, setVegOnly] = useState(false); // Vegetarian Only filter
+  const [proteinRequired, setProteinRequired] = useState(50);
+  const [numMeals, setNumMeals] = useState(3);
+  const [vegOnly, setVegOnly] = useState(false);
   const [message, setMessage] = useState('');
   const [mealRecommendations, setMealRecommendations] = useState([]);
 
   useEffect(() => {
-    // Scroll to the top when the component mounts
     window.scrollTo(0, 0);
   }, []);
 
@@ -22,35 +21,32 @@ const GymMeals = () => {
     if (type === 'checkbox') {
       setVegOnly(checked);
     } else if (name === 'proteinRequired') {
-      setProteinRequired(parseInt(value, 10)); // Convert protein to integer
+      setProteinRequired(parseInt(value, 10));
     } else if (name === 'caloriesPerDay') {
-      setCaloriesPerDay(parseInt(value, 10)); // Convert calories to integer
+      setCaloriesPerDay(parseInt(value, 10));
     } else if (name === 'numMeals') {
-      setNumMeals(Number(value)); // Convert number of meals to integer
+      setNumMeals(Number(value));
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Calculate calories per meal
     const caloriesPerMeal = caloriesPerDay / numMeals;
 
-    // Prepare the data to send to the backend for filtering meals
     const requestData = {
       caloriesPerDay,
       proteinRequired,
       numMeals,
       caloriesPerMeal,
-      vegOnly, // Vegetarian filter
+      vegOnly,
     };
 
     try {
-      // Send request to the backend to get meal recommendations
       const response = await axios.post('http://localhost:5000/api/gym-meals/gymmeals', requestData);
       console.log('Meal recommendations:', response.data);
 
-      setMealRecommendations(response.data); // Update state with meal recommendations
+      setMealRecommendations(response.data);
       setMessage('Meal recommendations retrieved successfully!');
     } catch (error) {
       console.error('Error fetching meal recommendations:', error);
@@ -58,18 +54,16 @@ const GymMeals = () => {
     }
   };
 
-  const groupMealsByDay = (meals, numMealsPerDay) => {
+  const groupMealsByDay = (meals) => {
     const days = [];
     for (let i = 0; i < 7; i++) {
       const dayMeals = meals.find(day => day.day === i + 1)?.meals || [];
-      days.push(dayMeals); // Ensure each day has an array, even if empty
+      days.push(dayMeals);
     }
     return days;
   };
 
-  const daysWithMeals = groupMealsByDay(mealRecommendations, numMeals); // Group meals by day
-
-  console.log('Days with meals:', daysWithMeals); // Debugging output
+  const daysWithMeals = groupMealsByDay(mealRecommendations);
 
   return (
     <Container className="mt-5">
@@ -110,7 +104,6 @@ const GymMeals = () => {
                 onChange={handleInputChange}
               />
             </Form.Group>
-
             <Form.Group controlId="vegOnly">
               <Form.Check
                 type="checkbox"
@@ -120,7 +113,6 @@ const GymMeals = () => {
                 onChange={handleInputChange}
               />
             </Form.Group>
-
             <Button variant="primary" type="submit">
               Get Meal Plan
             </Button>
@@ -128,7 +120,6 @@ const GymMeals = () => {
         </Card.Body>
       </Card>
 
-      {/* Meal Recommendations Section Outside the Card */}
       {daysWithMeals.flat().length > 0 && (
         <div className="mt-5">
           <h3 className="text-center mb-4">Recommended Meals for 7 Days</h3>
@@ -148,6 +139,9 @@ const GymMeals = () => {
                           </Badge>
                           <Badge bg="success" pill>
                             <strong>{meal.protein}</strong> g Protein
+                          </Badge>
+                          <Badge bg="warning" pill>
+                            <strong>{meal.healthiness_index.toFixed(2)}</strong> Healthy Index
                           </Badge>
                         </div>
                         <Card.Text className="mt-3 text-muted">
